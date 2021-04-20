@@ -12,3 +12,11 @@ For each version you can download the android app instaler:
 | **main (unstable)** | -- | -- |
 | **v1.0.0** | **April 20, 2021** | **[download](Releases/MFNNAv1.0.0.apk)** |
 
+Note: It must be taken into account that the Neural Netwokrs were trained for values describe below:
+
+Semi-Major Axis - (0, 0.64) - (m)
+
+Semi-Minor Axis - (0, 0.64) - (m)
+
+
+
