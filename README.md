@@ -5,7 +5,7 @@ Mobile Finite Nodal Neural Analysis is a virtual laboratory that allows the user
 
 ## Releases
 
-For each version you can download the android app instaler
+For each version you can download the android app instaler:
 
 | **Version** | **Release Date** | **Download** |
 |:-------:|:------:|:-------------:|
