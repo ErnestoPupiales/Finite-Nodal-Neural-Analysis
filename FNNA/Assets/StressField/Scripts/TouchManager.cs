@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using TMPro;
 
+/// <summary>
+/// This class uses logic to activate or deactivate the choosen fields.
+/// </summary>
 public class TouchManager : MonoBehaviour
 {
     private bool activeLateral = false;

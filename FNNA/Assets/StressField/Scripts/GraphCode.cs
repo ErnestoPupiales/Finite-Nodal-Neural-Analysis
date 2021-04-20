@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+/// <summary>
+/// This Class creates the stress fields by consulting the ANNs.
+/// </summary>
 public class GraphCode : MonoBehaviour
 {
     [SerializeField] private Sprite node = null;

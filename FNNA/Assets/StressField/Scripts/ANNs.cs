@@ -5,6 +5,9 @@ using TensorFlowLite;
 using TMPro;
 using System.IO;
 
+/// <summary>
+/// This Class implement the TensorFlowLite Library with the ANNs
+/// </summary>
 public class ANNs : MonoBehaviour
 {
     [SerializeField] string fileNameNodesCloud = "CloudNode.tflite";

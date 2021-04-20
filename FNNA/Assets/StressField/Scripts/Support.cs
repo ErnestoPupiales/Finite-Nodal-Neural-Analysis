@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// This class is use to activate a boolean when the user set
+/// the boundary condition on the border of the plate.
+/// The game object is move from the TouchManager with the first finger touch.
+/// </summary>
 public class Support : MonoBehaviour
 {
     public bool lateralFixSupport;
@@ -26,7 +31,9 @@ public class Support : MonoBehaviour
 
         }
 
-        else if (collision.tag == "UP")
+        //Code to implement when the ANNs predict stress applying loads on vertical direction
+
+        /*else if (collision.tag == "UP")
         {
             fixImageUP.SetActive(true);
             VerticalFixSupport = true;
@@ -38,7 +45,7 @@ public class Support : MonoBehaviour
             fixImageDown.SetActive(true);
             VerticalFixSupport = true;
 
-        }
+        }*/
 
     }
     private void OnTriggerExit2D(Collider2D collision)
@@ -57,7 +64,9 @@ public class Support : MonoBehaviour
 
         }
 
-        else if (collision.tag == "UP")
+        //Code to implement when the ANNs predict stress applying loads on vertical direction
+
+        /*else if (collision.tag == "UP")
         {
             fixImageUP.SetActive(false);
             VerticalFixSupport = false;
@@ -69,7 +78,7 @@ public class Support : MonoBehaviour
             fixImageDown.SetActive(false);
             VerticalFixSupport = false;
 
-        }
+        }*/
     }
 
 }
