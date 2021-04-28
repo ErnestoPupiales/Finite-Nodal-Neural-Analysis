@@ -3958,15 +3958,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9933662a564e274faeb9f9109c28283, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pools:
+  - tag: node8
+    prefab: {fileID: 21300000, guid: f6a132016134f6c4eb751e53ad19016b, type: 3}
+    size: 2025
+  - tag: node7
+    prefab: {fileID: 21300000, guid: 0cae3243c2cf83849ad575866e153c5b, type: 3}
+    size: 1520
+  - tag: node6
+    prefab: {fileID: 21300000, guid: 30fc8d35aeb585447804888f9cb8f909, type: 3}
+    size: 1520
+  - tag: node5
+    prefab: {fileID: 21300000, guid: 8f973460555db48478087eac8abd3fff, type: 3}
+    size: 1200
+  - tag: node4
+    prefab: {fileID: 21300000, guid: 848362b998a076d45b608803f02c1af4, type: 3}
+    size: 1200
+  - tag: node3
+    prefab: {fileID: 21300000, guid: 8734adc8daf3ede448c3217815db4108, type: 3}
+    size: 600
+  - tag: node2
+    prefab: {fileID: 21300000, guid: e59c1b831dc1be441bcfd73f3558354e, type: 3}
+    size: 300
+  - tag: node1
+    prefab: {fileID: 21300000, guid: 538cd9bed3408d34aa75dcc2bdf7941a, type: 3}
+    size: 150
   node: {fileID: 21300000, guid: 9998d4660a771aa489b96c1fa11c295f, type: 3}
-  stressnode8: {fileID: 21300000, guid: f6a132016134f6c4eb751e53ad19016b, type: 3}
-  stressnode7: {fileID: 21300000, guid: 0cae3243c2cf83849ad575866e153c5b, type: 3}
-  stressnode6: {fileID: 21300000, guid: 30fc8d35aeb585447804888f9cb8f909, type: 3}
-  stressnode5: {fileID: 21300000, guid: 8f973460555db48478087eac8abd3fff, type: 3}
-  stressnode4: {fileID: 21300000, guid: 848362b998a076d45b608803f02c1af4, type: 3}
-  stressnode3: {fileID: 21300000, guid: 8734adc8daf3ede448c3217815db4108, type: 3}
-  stressnode2: {fileID: 21300000, guid: e59c1b831dc1be441bcfd73f3558354e, type: 3}
-  stressnode1: {fileID: 21300000, guid: 538cd9bed3408d34aa75dcc2bdf7941a, type: 3}
   TagNode8_Eqv: {fileID: 1943170944}
   TagNode7_Eqv: {fileID: 1869910772}
   TagNode6_Eqv: {fileID: 1904353236}

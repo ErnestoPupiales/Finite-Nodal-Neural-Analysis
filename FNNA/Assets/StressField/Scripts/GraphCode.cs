@@ -9,16 +9,20 @@ using TMPro;
 /// </summary>
 public class GraphCode : MonoBehaviour
 {
-    [SerializeField] private Sprite node = null;
 
-    [SerializeField] private Sprite stressnode8 = null;
-    [SerializeField] private Sprite stressnode7 = null;
-    [SerializeField] private Sprite stressnode6 = null;
-    [SerializeField] private Sprite stressnode5 = null;
-    [SerializeField] private Sprite stressnode4 = null;
-    [SerializeField] private Sprite stressnode3 = null;
-    [SerializeField] private Sprite stressnode2 = null;
-    [SerializeField] private Sprite stressnode1 = null;
+    [System.Serializable]
+    public class Pool
+    {
+        public string tag;
+        public Sprite prefab;
+        public int size;
+    }
+
+    public List<Pool> pools;
+
+    public Dictionary<string, Queue<GameObject>> poolDictionary;
+
+    [SerializeField] private Sprite node = null;
 
     [SerializeField] private TMP_Text TagNode8_Eqv = null;
     [SerializeField] private TMP_Text TagNode7_Eqv = null;
@@ -40,7 +44,7 @@ public class GraphCode : MonoBehaviour
     [SerializeField] private TMP_Text TagNode1_Int = null;
     [SerializeField] private TMP_Text TagNodeMin_Int = null;
 
-    
+
 
     [SerializeField] TMP_InputField SMayor = null;
     [SerializeField] TMP_InputField SMenor = null;
@@ -49,7 +53,7 @@ public class GraphCode : MonoBehaviour
     public ANNs ANN;
 
     private float stressMin = 1e30f;
-    private float stressMax = 0;
+    private float stressMax = -1e30f;
 
     private float[] nodesCloudArray;
     private float[] vonMissesArray;
@@ -64,13 +68,12 @@ public class GraphCode : MonoBehaviour
     private RectTransform vonMissesContainer;
     public GameObject SymmetryVonMisses;
     private RectTransform symmetryVonMisses;
-    
 
     public GameObject TrescaContainer;
     private RectTransform trescaContainer;
     public GameObject SymmetryTresca;
     private RectTransform symmetryTresca;
-    
+
     public RectTransform workplane;
 
     float Scale = 1e9f;
@@ -100,12 +103,39 @@ public class GraphCode : MonoBehaviour
 
         trescaContainer = TrescaContainer.GetComponent<RectTransform>();
         symmetryTresca = SymmetryTresca.GetComponent<RectTransform>();
+
+        poolDictionary = new Dictionary<string, Queue<GameObject>>();
+
+        Queue<GameObject> objectpoolnode0 = new Queue<GameObject>();
+        for (int i = 0; i < 2025 * 4; i++)
+        {
+            GameObject obj = new GameObject("node0", typeof(Image));
+            obj.GetComponent<Image>().sprite = node;
+            objectpoolnode0.Enqueue(obj);
+        }
+
+        poolDictionary.Add("node0", objectpoolnode0);
+
+        foreach (Pool pool in pools)
+        {
+            Queue<GameObject> objectpool = new Queue<GameObject>();
+
+            for (int i = 0; i < pool.size*8; i++)
+            {
+                GameObject obj = new GameObject(pool.tag, typeof(Image));
+                obj.GetComponent<Image>().sprite = pool.prefab;
+                obj.tag = pool.tag;
+                objectpool.Enqueue(obj);
+            }
+
+            poolDictionary.Add(pool.tag, objectpool);
+        }
     }
 
 
     public void Calculate()
     {
-        
+
         beginning = Time.realtimeSinceStartup;
         ClearAll();
         TimeCountClear1.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
@@ -127,20 +157,23 @@ public class GraphCode : MonoBehaviour
         TimeCountClear9.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
         Symmetry(trescaContainer, symmetryTresca);
         TimeCountClear10.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
-        
+
+
 
     }
 
-    private void CreateNode(Vector2 anchoredPosition, RectTransform container, Sprite node)
+    private void CreateNode(Vector2 anchoredPosition, RectTransform container, string tag)
     {
-        GameObject gameObject = new GameObject("node", typeof(Image));
+        GameObject gameObject = poolDictionary[tag].Dequeue();
         gameObject.transform.SetParent(container, false);
-        gameObject.GetComponent<Image>().sprite = node;
         RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
         rectTransform.anchoredPosition = anchoredPosition;
         rectTransform.sizeDelta = new Vector2(15, 15);
         rectTransform.anchorMin = new Vector2(0, 0);
         rectTransform.anchorMax = new Vector2(0, 0);
+        gameObject.SetActive(true);
+        poolDictionary[tag].Enqueue(gameObject);
+
     }
 
     public void NodesCloudDisplay(float[] Nodes)
@@ -150,7 +183,7 @@ public class GraphCode : MonoBehaviour
 
         for (int i = 0; i < 2025; i++)
         {
-            CreateNode(new Vector2(Nodes[j] * 256 / 0.64f, Nodes[k] * 256 / 0.64f), nodeCloudContainer, node);
+            CreateNode(new Vector2(Nodes[j] * 256 / 0.64f, Nodes[k] * 256 / 0.64f), nodeCloudContainer, "node0");
             j = j + 2;
             k = k + 2;
         }
@@ -159,7 +192,7 @@ public class GraphCode : MonoBehaviour
     public void MaxMin(float[] Stress)
     {
         stressMin = 1e30f;
-        stressMax = 0;
+        stressMax = 0f;
 
         for (int i = 0; i < 2025; i++)
         {
@@ -177,7 +210,7 @@ public class GraphCode : MonoBehaviour
     public void StressDisplay(float[] coordinates, float[] stress, RectTransform container, int tag)
     {
         
-        Sprite StressNode;
+        string StressNodetag;
         MaxMin(stress);
 
         int j = 0;
@@ -213,17 +246,17 @@ public class GraphCode : MonoBehaviour
 
         for (int i = 0; i < 2025; i++)
         {
-            if (stressMin <= stress[i] && stress[i] < stressMin + delta * 1) StressNode = stressnode1;
-            else if (stressMin + delta * 1 <= stress[i] && stress[i] < stressMin + delta * 2) StressNode = stressnode2;
-            else if (stressMin + delta * 2 <= stress[i] && stress[i] < stressMin + delta * 3) StressNode = stressnode3;
-            else if (stressMin + delta * 3 <= stress[i] && stress[i] < stressMin + delta * 4) StressNode = stressnode4;
-            else if (stressMin + delta * 4 <= stress[i] && stress[i] < stressMin + delta * 5) StressNode = stressnode5;
-            else if (stressMin + delta * 5 <= stress[i] && stress[i] < stressMin + delta * 6) StressNode = stressnode6;
-            else if (stressMin + delta * 6 <= stress[i] && stress[i] < stressMin + delta * 7) StressNode = stressnode7;
-            else if (stressMin + delta * 7 <= stress[i] && stress[i] < stressMin + delta * 8) StressNode = stressnode8;
-            else StressNode = node;
+            if (stressMin <= stress[i] && stress[i] < stressMin + delta * 1) StressNodetag = "node1";
+            else if (stressMin + delta * 1 <= stress[i] && stress[i] < stressMin + delta * 2) StressNodetag = "node2";
+            else if (stressMin + delta * 2 <= stress[i] && stress[i] < stressMin + delta * 3) StressNodetag = "node3";
+            else if (stressMin + delta * 3 <= stress[i] && stress[i] < stressMin + delta * 4) StressNodetag = "node4";
+            else if (stressMin + delta * 4 <= stress[i] && stress[i] < stressMin + delta * 5) StressNodetag = "node5";
+            else if (stressMin + delta * 5 <= stress[i] && stress[i] < stressMin + delta * 6) StressNodetag = "node6";
+            else if (stressMin + delta * 6 <= stress[i] && stress[i] < stressMin + delta * 7) StressNodetag = "node7";
+            else if (stressMin + delta * 7 <= stress[i] && stress[i] < stressMin + delta * 8) StressNodetag = "node8";
+            else StressNodetag = "node0";
 
-            CreateNode(new Vector2(coordinates[j] * 256 / 0.64f, coordinates[k] * 256 / 0.64f), container, StressNode);
+            CreateNode(new Vector2(coordinates[j] * 256 / 0.64f, coordinates[k] * 256 / 0.64f), container, StressNodetag);
             j = j + 2;
             k = k + 2;
         }
@@ -255,32 +288,49 @@ public class GraphCode : MonoBehaviour
     {
         foreach (Transform children in nodeCloudContainer)
         {
-            Destroy(children.gameObject);
+            //poolDictionary["node0"].Enqueue(children.gameObject);
+            children.gameObject.SetActive(false);
+
         }
 
         foreach (Transform children in symmetryNodeCloud)
         {
-            Destroy(children.gameObject);
+            foreach (Transform obj in children)
+            {
+                //poolDictionary["node0"].Enqueue(children.gameObject);
+                obj.gameObject.SetActive(false);
+            }
+         
         }
 
         foreach (Transform children in vonMissesContainer)
         {
-            Destroy(children.gameObject);
+            //poolDictionary[children.tag].Enqueue(children.gameObject);
+            children.gameObject.SetActive(false);
         }
 
         foreach (Transform children in symmetryVonMisses)
         {
-            Destroy(children.gameObject);
+            foreach (Transform obj in children)
+            {
+                //poolDictionary[obj.tag].Enqueue(children.gameObject);
+                obj.gameObject.SetActive(false);
+            }
         }
 
         foreach (Transform children in trescaContainer)
         {
-            Destroy(children.gameObject);
+            //poolDictionary[children.tag].Enqueue(children.gameObject);
+            children.gameObject.SetActive(false);
         }
 
         foreach (Transform children in symmetryTresca)
         {
-            Destroy(children.gameObject);
+            foreach (Transform obj in children)
+            {
+                //poolDictionary[obj.tag].Enqueue(children.gameObject);
+                obj.gameObject.SetActive(false);
+            }
         }
 
     }
