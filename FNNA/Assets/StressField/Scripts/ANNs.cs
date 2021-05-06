@@ -8,87 +8,101 @@ using System.IO;
 /// <summary>
 /// This Class implement the TensorFlowLite Library with the ANNs
 /// </summary>
+
 public class ANNs : MonoBehaviour
 {
-    [SerializeField] string fileNameNodesCloud = "CloudNode.tflite";
-    [SerializeField] string fileNameVonMisses = "VonMisses.tflite";
-    [SerializeField] string fileNameTresca = "Tresca.tflite";
 
-    Interpreter nodesCloud_NN;
-    Interpreter VonMisses_NN; 
-    Interpreter Tresca_NN;
+    public List<ListNN> Parameters = new List<ListNN>();
+    public List<ArtificialNeuralNetwork> NN = new List<ArtificialNeuralNetwork>();
 
-    void Start()
+    public class ArtificialNeuralNetwork
     {
-        var options = new InterpreterOptions()
+
+        public string fileNamePath;
+        public int inputNeurons;
+        public int outputNeurons;
+
+        private float[] inputArray;
+        private float[] outputArray;
+
+        Interpreter InterpreterNN;
+
+        public ArtificialNeuralNetwork(string FileNamePath, int InputNeurons, int OutputNeurons)
         {
-            threads = 2,
-        };
+            this.fileNamePath = FileNamePath;
+            this.inputNeurons = InputNeurons;
+            this.outputNeurons = OutputNeurons;
 
-        string pathNodesCloud = Path.Combine(Application.streamingAssetsPath, fileNameNodesCloud);
-        string pathVonMisses = Path.Combine(Application.streamingAssetsPath, fileNameVonMisses);
-        string pathTresca = Path.Combine(Application.streamingAssetsPath, fileNameTresca);
+            inputArray = new float[inputNeurons];
+            outputArray = new float[outputNeurons];
 
-        nodesCloud_NN = new Interpreter(FileUtil.LoadFile(pathNodesCloud), options);
-        nodesCloud_NN.AllocateTensors();
-        
-        VonMisses_NN = new Interpreter(FileUtil.LoadFile(pathVonMisses), options);
-        VonMisses_NN.AllocateTensors();
+            var options = new InterpreterOptions()
+            {
+                threads = 2,
+            };
 
-        Tresca_NN = new Interpreter(FileUtil.LoadFile(pathTresca), options);
-        Tresca_NN.AllocateTensors();
+            string path = Path.Combine(Application.streamingAssetsPath, fileNamePath);
 
+            this.InterpreterNN = new Interpreter(FileUtil.LoadFile(path), options);
+            this.InterpreterNN.AllocateTensors();
+        }
+
+        public float[] NN_DoInference(string a, string b, string c)
+        {
+
+            inputArray[0] = float.Parse(a);
+            inputArray[1] = float.Parse(b);
+            inputArray[2] = float.Parse(c);
+
+            InterpreterNN.SetInputTensorData(0, inputArray);
+            InterpreterNN.Invoke();
+            InterpreterNN.GetOutputTensorData(0, outputArray);
+
+            return (outputArray);
+        }
+
+        public float[] NN_DoInference(string a, string b)
+        {
+
+            inputArray[0] = float.Parse(a);
+            inputArray[1] = float.Parse(b);
+
+            InterpreterNN.SetInputTensorData(0, inputArray);
+            InterpreterNN.Invoke();
+            InterpreterNN.GetOutputTensorData(0, outputArray);
+
+            return (outputArray);
+        }
+
+        public void OnDestroyNN()
+        {
+            InterpreterNN?.Dispose();
+        }
     }
 
-    private void OnDestroy()    
+    [System.Serializable]
+    public class ListNN
     {
-        nodesCloud_NN?.Dispose();
-        VonMisses_NN?.Dispose();
-        Tresca_NN.Dispose();
+        public string name;
+        public int input;
+        public int output;
     }
 
-    public float[] nodesCloud_DoInference(string a, string b)
+    private void Awake()
     {
-
-        float[] input = new float[2];
-        input[0] = float.Parse(a);
-        input[1] = float.Parse(b);
-
-        float[] output = new float[4050];
-
-        nodesCloud_NN.SetInputTensorData(0, input);
-        nodesCloud_NN.Invoke();
-        nodesCloud_NN.GetOutputTensorData(0, output);
-
-        return (output);
+        foreach (var item in Parameters)
+        {
+            ArtificialNeuralNetwork Prueba = new ArtificialNeuralNetwork(item.name+".tflite", item.input, item.output);
+            NN.Add(Prueba);
+        }
     }
 
-    public float[] VonMisses_DoInference(string a, string b, string c)
+    private void OnDestroy()
     {
-        float[] input = new float[3];
-        input[0] = float.Parse(a);
-        input[1] = float.Parse(b);
-        input[2] = float.Parse(c);
-
-        float[] output = new float[2025];
-        VonMisses_NN.SetInputTensorData(0, input);
-        VonMisses_NN.Invoke();
-        VonMisses_NN.GetOutputTensorData(0, output);
-        return (output);
-    }
-
-    public float[] Tresca_DoInference(string a, string b, string c)
-    {
-        float[] input = new float[3];
-        input[0] = float.Parse(a);
-        input[1] = float.Parse(b);
-        input[2] = float.Parse(c);
-
-        float[] output = new float[2025];
-        Tresca_NN.SetInputTensorData(0, input);
-        Tresca_NN.Invoke();
-        Tresca_NN.GetOutputTensorData(0, output);
-        return (output);
+        foreach(var item in NN)
+        {
+            item.OnDestroyNN();
+        }
     }
 
 }
