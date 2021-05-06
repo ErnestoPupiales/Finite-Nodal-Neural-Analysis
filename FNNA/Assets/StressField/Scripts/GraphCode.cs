@@ -14,8 +14,14 @@ public class GraphCode : MonoBehaviour
     public ANNs aNN;
 
     public RectTransform FieldContainer;
-    public List<GameObject> FieldList;
-    public List<RectTransform> fieldRectTransformList;
+    private List<GameObject> FieldList;
+    private List<RectTransform> fieldRectTransformList;
+
+
+    private List<Text> LabelsLists;
+    public Transform LabelContainer;
+    private List<GameObject> LabelObject;
+    public Font LabelFont;
 
     [SerializeField] TMP_InputField SMayor = null;
     [SerializeField] TMP_InputField SMenor = null;
@@ -38,19 +44,6 @@ public class GraphCode : MonoBehaviour
     [SerializeField] private Sprite stressnode1 = null;
 
     float Scale = 1e9f;
-
-    [SerializeField] private TMP_Text TagNode8_Int = null;
-    [SerializeField] private TMP_Text TagNode7_Int = null;
-    [SerializeField] private TMP_Text TagNode6_Int = null;
-    [SerializeField] private TMP_Text TagNode5_Int = null;
-    [SerializeField] private TMP_Text TagNode4_Int = null;
-    [SerializeField] private TMP_Text TagNode3_Int = null;
-    [SerializeField] private TMP_Text TagNode2_Int = null;
-    [SerializeField] private TMP_Text TagNode1_Int = null;
-    [SerializeField] private TMP_Text TagNodeMin_Int = null;
-
-
-
 
     //Just for evaluate the procesing time
     [SerializeField] private TMP_Text TimeCountClear1 = null;
@@ -78,8 +71,12 @@ public class GraphCode : MonoBehaviour
         FieldList = new List<GameObject>();
         fieldRectTransformList = new List<RectTransform>();
 
+        LabelsLists = new List<Text>();
+        LabelObject = new List<GameObject>();
+
         foreach (var item in aNN.Parameters)
         {
+
             GameObject field = new GameObject(item.name, typeof(RectTransform));
             field.transform.SetParent(FieldContainer, false);
             RectTransform fieldRectTransform = field.GetComponent<RectTransform>();
@@ -90,6 +87,16 @@ public class GraphCode : MonoBehaviour
 
             FieldList.Add(field);
             fieldRectTransformList.Add(fieldRectTransform);
+
+            GameObject label = new GameObject(item.name + "label", typeof(Text));
+            label.transform.SetParent(LabelContainer, false);
+            label.GetComponent<RectTransform>().sizeDelta = new Vector2(150, 580);
+            Text labeltext = label.GetComponent<Text>();
+            labeltext.fontSize = 32;
+            labeltext.font = LabelFont;
+
+            LabelsLists.Add(labeltext);
+            LabelObject.Add(label);
         }
     }
 
@@ -127,7 +134,7 @@ public class GraphCode : MonoBehaviour
         for (int i = 1; i < FieldList.Count; i++)
         {
             stressArray = aNN.NN[i].NN_DoInference(SMayor.text, SMenor.text, Displacement.text);
-            StressDisplay(nodesCloudArray, stressArray, fieldRectTransformList[i]);
+            StressDisplay(nodesCloudArray, stressArray, fieldRectTransformList[i],i);
             Symmetry(fieldRectTransformList[i]);
         }
     }
@@ -175,7 +182,7 @@ public class GraphCode : MonoBehaviour
         }
     }
 
-    public void StressDisplay(float[] coordinates, float[] stress, RectTransform container)
+    public void StressDisplay(float[] coordinates, float[] stress, RectTransform container, int labelindex)
     {
         
         Sprite StressNode;
@@ -185,16 +192,16 @@ public class GraphCode : MonoBehaviour
         int k = 1;
 
         float delta = (stressMax - stressMin) / 8;
-        
-        TagNodeMin_Int.text = (stressMin * Scale).ToString(".000e+00");
-        TagNode1_Int.text = ((stressMin + delta * 1) * Scale).ToString(".000e+00");
-        TagNode2_Int.text = ((stressMin + delta * 2) * Scale).ToString(".000e+00");
-        TagNode3_Int.text = ((stressMin + delta * 3) * Scale).ToString(".000e+00");
-        TagNode4_Int.text = ((stressMin + delta * 4) * Scale).ToString(".000e+00");
-        TagNode5_Int.text = ((stressMin + delta * 5) * Scale).ToString(".000e+00");
-        TagNode6_Int.text = ((stressMin + delta * 6) * Scale).ToString(".000e+00");
-        TagNode7_Int.text = ((stressMin + delta * 7) * Scale).ToString(".000e+00");
-        TagNode8_Int.text = ((stressMin + delta * 8) * Scale).ToString(".000e+00");
+
+        LabelsLists[labelindex].text =      (stressMin * Scale).ToString(".000e+00") + "\n\n" +
+                                            ((stressMin + delta * 1) * Scale).ToString(".000e+00") + "\n\n" +
+                                            ((stressMin + delta * 2) * Scale).ToString(".000e+00") + "\n\n" +
+                                            ((stressMin + delta * 3) * Scale).ToString(".000e+00") + "\n\n" +
+                                            ((stressMin + delta * 4) * Scale).ToString(".000e+00") + "\n\n" +
+                                            ((stressMin + delta * 5) * Scale).ToString(".000e+00") + "\n\n" +
+                                            ((stressMin + delta * 6) * Scale).ToString(".000e+00") + "\n\n" +
+                                            ((stressMin + delta * 7) * Scale).ToString(".000e+00") + "\n\n" +
+                                            ((stressMin + delta * 8) * Scale).ToString(".000e+00");
         
         for (int i = 0; i < 2025; i++)
         {
