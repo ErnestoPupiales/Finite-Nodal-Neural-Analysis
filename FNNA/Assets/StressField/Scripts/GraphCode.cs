@@ -54,12 +54,9 @@ public class GraphCode : MonoBehaviour
     [SerializeField] private TMP_Text TimeCountClear6 = null;
     [SerializeField] private TMP_Text TimeCountClear7 = null;
     [SerializeField] private TMP_Text TimeCountClear8 = null;
-    [SerializeField] private TMP_Text TimeCountClear9 = null;
-    [SerializeField] private TMP_Text TimeCountClear10 = null;
+    [SerializeField] private TMP_Text TimeCountClear9 = null;    
 
-    
-
-    //public double beginning;
+    public double beginning;
 
     private void Awake()
     {
@@ -97,46 +94,42 @@ public class GraphCode : MonoBehaviour
 
             LabelsLists.Add(labeltext);
             LabelObject.Add(label);
+            System.GC.Collect();
         }
+        System.GC.Collect();
     }
 
 
     public void Calculate()
     {
-
-        /*beginning = Time.realtimeSinceStartup; 
-        TimeCountClear1.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
-
-        TimeCountClear2.text = (Time.realtimeSinceStartup - beginning).ToString("0.0000000");
-
-        TimeCountClear3.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
-
-        TimeCountClear4.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
-
-        TimeCountClear5.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
-
-        TimeCountClear6.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
-
-        TimeCountClear7.text = (Time.realtimeSinceStartup - beginning).ToString("0.0000000");
-
-        TimeCountClear8.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
-
-        TimeCountClear9.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
-
-        TimeCountClear10.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");*/
-
+        beginning = Time.realtimeSinceStartup;
         ClearAll();
-
+        //System.GC.Collect();
+        TimeCountClear1.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
         nodesCloudArray = aNN.NN[0].NN_DoInference(SMayor.text, SMenor.text);
+        TimeCountClear2.text = (Time.realtimeSinceStartup - beginning).ToString("0.0000000");
         NodesCloudDisplay(nodesCloudArray);
+        TimeCountClear3.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
         Symmetry(fieldRectTransformList[0]);
+        TimeCountClear4.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
+        
+        //System.GC.Collect();
 
         for (int i = 1; i < FieldList.Count; i++)
         {
+            TimeCountClear5.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
             stressArray = aNN.NN[i].NN_DoInference(SMayor.text, SMenor.text, Displacement.text);
+            TimeCountClear6.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
             StressDisplay(nodesCloudArray, stressArray, fieldRectTransformList[i],i);
+            stressArray = null;
+            TimeCountClear7.text = (Time.realtimeSinceStartup - beginning).ToString("0.0000000");
             Symmetry(fieldRectTransformList[i]);
+            TimeCountClear8.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
+            System.GC.Collect();
         }
+        //nodesCloudArray = null;
+        TimeCountClear9.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
+        
     }
 
     private void CreateNode(Vector2 anchoredPosition, RectTransform container, Sprite node)
@@ -249,7 +242,6 @@ public class GraphCode : MonoBehaviour
                 }
             }
         }
-
 
     }
 

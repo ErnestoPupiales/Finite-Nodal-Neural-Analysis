@@ -49,7 +49,7 @@ public class ANNs : MonoBehaviour
 
         public float[] NN_DoInference(string a, string b, string c)
         {
-
+            System.GC.Collect();
             inputArray[0] = float.Parse(a);
             inputArray[1] = float.Parse(b);
             inputArray[2] = float.Parse(c);
@@ -63,14 +63,14 @@ public class ANNs : MonoBehaviour
 
         public float[] NN_DoInference(string a, string b)
         {
-
+            System.GC.Collect();
             inputArray[0] = float.Parse(a);
             inputArray[1] = float.Parse(b);
 
             InterpreterNN.SetInputTensorData(0, inputArray);
             InterpreterNN.Invoke();
             InterpreterNN.GetOutputTensorData(0, outputArray);
-
+            
             return (outputArray);
         }
 
