@@ -9,6 +9,18 @@ using TMPro;
 /// </summary>
 public class GraphCode : MonoBehaviour
 {
+
+    [System.Serializable]
+    public class Pool
+    {
+        public string tag;
+        public Sprite prefab;
+        public int size;
+    }
+
+    public List<Pool> pools;
+
+
     public RectTransform workplane;
 
     public ANNs aNN;
@@ -34,14 +46,6 @@ public class GraphCode : MonoBehaviour
     private float stressMax;
 
     [SerializeField] private Sprite node = null;
-    [SerializeField] private Sprite stressnode8 = null;
-    [SerializeField] private Sprite stressnode7 = null;
-    [SerializeField] private Sprite stressnode6 = null;
-    [SerializeField] private Sprite stressnode5 = null;
-    [SerializeField] private Sprite stressnode4 = null;
-    [SerializeField] private Sprite stressnode3 = null;
-    [SerializeField] private Sprite stressnode2 = null;
-    [SerializeField] private Sprite stressnode1 = null;
 
     float Scale = 1e9f;
 
@@ -52,11 +56,13 @@ public class GraphCode : MonoBehaviour
     [SerializeField] private TMP_Text TimeCountClear4 = null;
     [SerializeField] private TMP_Text TimeCountClear5 = null;
     [SerializeField] private TMP_Text TimeCountClear6 = null;
-    [SerializeField] private TMP_Text TimeCountClear7 = null;
-    [SerializeField] private TMP_Text TimeCountClear8 = null;
-    [SerializeField] private TMP_Text TimeCountClear9 = null;    
+  
 
     public double beginning;
+
+    public Dictionary<string, Queue<GameObject>> poolDictionary;
+
+    
 
     private void Awake()
     {
@@ -94,54 +100,72 @@ public class GraphCode : MonoBehaviour
 
             LabelsLists.Add(labeltext);
             LabelObject.Add(label);
-            System.GC.Collect();
         }
-        System.GC.Collect();
+
+        poolDictionary = new Dictionary<string, Queue<GameObject>>();
+
+        Queue<GameObject> objectpoolnode0 = new Queue<GameObject>();
+        for (int i = 0; i < 2025 * 4; i++)
+        {
+            GameObject obj = new GameObject("node0", typeof(Image));
+            obj.GetComponent<Image>().sprite = node;
+            obj.SetActive(false);
+            objectpoolnode0.Enqueue(obj);
+        }
+
+        poolDictionary.Add("node0", objectpoolnode0);
+
+        foreach (Pool pool in pools)
+        {
+            Queue<GameObject> objectpool = new Queue<GameObject>();
+
+            for (int i = 0; i < pool.size * 4; i++)
+            {
+                GameObject obj = new GameObject(pool.tag, typeof(Image));
+                obj.GetComponent<Image>().sprite = pool.prefab;
+                obj.SetActive(false);
+                objectpool.Enqueue(obj);
+            }
+
+            poolDictionary.Add(pool.tag, objectpool);
+        }
     }
 
 
-    public void Calculate()
+public void Calculate()
     {
         beginning = Time.realtimeSinceStartup;
         ClearAll();
-        //System.GC.Collect();
         TimeCountClear1.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
         nodesCloudArray = aNN.NN[0].NN_DoInference(SMayor.text, SMenor.text);
         TimeCountClear2.text = (Time.realtimeSinceStartup - beginning).ToString("0.0000000");
         NodesCloudDisplay(nodesCloudArray);
         TimeCountClear3.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
-        Symmetry(fieldRectTransformList[0]);
-        TimeCountClear4.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
-        
-        //System.GC.Collect();
-
+       
         for (int i = 1; i < FieldList.Count; i++)
         {
-            TimeCountClear5.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
+            
             stressArray = aNN.NN[i].NN_DoInference(SMayor.text, SMenor.text, Displacement.text);
-            TimeCountClear6.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
+            TimeCountClear4.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
             StressDisplay(nodesCloudArray, stressArray, fieldRectTransformList[i],i);
-            stressArray = null;
-            TimeCountClear7.text = (Time.realtimeSinceStartup - beginning).ToString("0.0000000");
-            Symmetry(fieldRectTransformList[i]);
-            TimeCountClear8.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
-            System.GC.Collect();
+            TimeCountClear5.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
         }
-        //nodesCloudArray = null;
-        TimeCountClear9.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
+        TimeCountClear6.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
         
     }
 
-    private void CreateNode(Vector2 anchoredPosition, RectTransform container, Sprite node)
+    private void CreateNode(Vector2 anchoredPosition, RectTransform container, string tag /*Sprite node*/)
     {
-        GameObject gameObject = new GameObject("node", typeof(Image));
+        GameObject gameObject = poolDictionary[tag].Dequeue();
         gameObject.transform.SetParent(container, false);
-        gameObject.GetComponent<Image>().sprite = node;
         RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
         rectTransform.anchoredPosition = anchoredPosition;
         rectTransform.sizeDelta = new Vector2(15, 15);
         rectTransform.anchorMin = new Vector2(0, 0);
         rectTransform.anchorMax = new Vector2(0, 0);
+        gameObject.SetActive(true);
+        poolDictionary[tag].Enqueue(gameObject);
+
     }
 
     public void NodesCloudDisplay(float[] Nodes)
@@ -151,7 +175,10 @@ public class GraphCode : MonoBehaviour
 
         for (int i = 0; i < 2025; i++)
         {
-            CreateNode(new Vector2(Nodes[j] * 256 / 0.64f, Nodes[k] * 256 / 0.64f), fieldRectTransformList[0], node);
+            CreateNode(new Vector2(Nodes[j] * 256 / 0.64f, Nodes[k] * 256 / 0.64f), fieldRectTransformList[0], "node0");
+            CreateNode(new Vector2(Nodes[j] * -256 / 0.64f, Nodes[k] * 256 / 0.64f), fieldRectTransformList[0], "node0");
+            CreateNode(new Vector2(Nodes[j] * 256 / 0.64f, Nodes[k] * -256 / 0.64f), fieldRectTransformList[0], "node0");
+            CreateNode(new Vector2(Nodes[j] * -256 / 0.64f, Nodes[k] * -256 / 0.64f), fieldRectTransformList[0], "node0");
             j = j + 2;
             k = k + 2;
         }
@@ -176,9 +203,8 @@ public class GraphCode : MonoBehaviour
     }
 
     public void StressDisplay(float[] coordinates, float[] stress, RectTransform container, int labelindex)
-    {
-        
-        Sprite StressNode;
+    {    
+        string stressnode;
         MaxMin(stress);
 
         int j = 0;
@@ -198,34 +224,24 @@ public class GraphCode : MonoBehaviour
         
         for (int i = 0; i < 2025; i++)
         {
-            if (stressMin <= stress[i] && stress[i] < stressMin + delta * 1) StressNode = stressnode1;
-            else if (stressMin + delta * 1 <= stress[i] && stress[i] < stressMin + delta * 2) StressNode = stressnode2;
-            else if (stressMin + delta * 2 <= stress[i] && stress[i] < stressMin + delta * 3) StressNode = stressnode3;
-            else if (stressMin + delta * 3 <= stress[i] && stress[i] < stressMin + delta * 4) StressNode = stressnode4;
-            else if (stressMin + delta * 4 <= stress[i] && stress[i] < stressMin + delta * 5) StressNode = stressnode5;
-            else if (stressMin + delta * 5 <= stress[i] && stress[i] < stressMin + delta * 6) StressNode = stressnode6;
-            else if (stressMin + delta * 6 <= stress[i] && stress[i] < stressMin + delta * 7) StressNode = stressnode7;
-            else if (stressMin + delta * 7 <= stress[i] && stress[i] < stressMin + delta * 8) StressNode = stressnode8;
-            else StressNode = node;
 
-            CreateNode(new Vector2(coordinates[j] * 256 / 0.64f, coordinates[k] * 256 / 0.64f), container, StressNode);
+            if (stressMin <= stress[i] && stress[i] < stressMin + delta * 1) stressnode = "stressnode1";
+            else if (stressMin + delta * 1 <= stress[i] && stress[i] < stressMin + delta * 2) stressnode = "stressnode2";
+            else if (stressMin + delta * 2 <= stress[i] && stress[i] < stressMin + delta * 3) stressnode = "stressnode3";
+            else if (stressMin + delta * 3 <= stress[i] && stress[i] < stressMin + delta * 4) stressnode = "stressnode4";
+            else if (stressMin + delta * 4 <= stress[i] && stress[i] < stressMin + delta * 5) stressnode = "stressnode5";
+            else if (stressMin + delta * 5 <= stress[i] && stress[i] < stressMin + delta * 6) stressnode = "stressnode6";
+            else if (stressMin + delta * 6 <= stress[i] && stress[i] < stressMin + delta * 7) stressnode = "stressnode7";
+            else if (stressMin + delta * 7 <= stress[i] && stress[i] < stressMin + delta * 8) stressnode = "stressnode8";
+            else stressnode = "stressnode8";
+
+            CreateNode(new Vector2(coordinates[j] * 256 / 0.64f, coordinates[k] * 256 / 0.64f), container, stressnode);
+            CreateNode(new Vector2(coordinates[j] * -256 / 0.64f, coordinates[k] * 256 / 0.64f), container, stressnode);
+            CreateNode(new Vector2(coordinates[j] * 256 / 0.64f, coordinates[k] * -256 / 0.64f), container, stressnode);
+            CreateNode(new Vector2(coordinates[j] * -256 / 0.64f, coordinates[k] * -256 / 0.64f), container, stressnode);
             j = j + 2;
             k = k + 2;
         }
-    }
-
-    public void Symmetry(RectTransform quarterModel)
-    {
-        RectTransform Mirror1 = Instantiate(quarterModel, quarterModel, false);
-        Mirror1.pivot = new Vector2(0, 0);
-        Mirror1.anchoredPosition = new Vector2(-256,-256);
-        Mirror1.localScale = new Vector3(-1, 1, 1);
-
-        RectTransform Mirror2 = Instantiate(quarterModel, quarterModel, false);
-        Mirror2.pivot = new Vector2(0, 0);
-        Mirror2.anchoredPosition = new Vector2(-256, -256);
-        Mirror2.localScale = new Vector3(1, -1, 1);
-
     }
 
     public void ClearAll()
@@ -234,11 +250,11 @@ public class GraphCode : MonoBehaviour
         {
             foreach (Transform subchildren in children)
             {
-                Destroy(subchildren.gameObject);
+                subchildren.gameObject.SetActive(false);
 
-                foreach(Transform subchildrenint in subchildren)
+                foreach (Transform subchildrenint in subchildren)
                 {
-                    Destroy(subchildrenint.gameObject);
+                    subchildren.gameObject.SetActive(false);
                 }
             }
         }

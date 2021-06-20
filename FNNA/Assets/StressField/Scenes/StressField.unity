@@ -3830,6 +3830,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9933662a564e274faeb9f9109c28283, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pools:
+  - tag: stressnode1
+    prefab: {fileID: 21300000, guid: 538cd9bed3408d34aa75dcc2bdf7941a, type: 3}
+    size: 2025
+  - tag: stressnode2
+    prefab: {fileID: 21300000, guid: e59c1b831dc1be441bcfd73f3558354e, type: 3}
+    size: 2025
+  - tag: stressnode3
+    prefab: {fileID: 21300000, guid: 8734adc8daf3ede448c3217815db4108, type: 3}
+    size: 2025
+  - tag: stressnode4
+    prefab: {fileID: 21300000, guid: 848362b998a076d45b608803f02c1af4, type: 3}
+    size: 2025
+  - tag: stressnode5
+    prefab: {fileID: 21300000, guid: 8f973460555db48478087eac8abd3fff, type: 3}
+    size: 2025
+  - tag: stressnode6
+    prefab: {fileID: 21300000, guid: 30fc8d35aeb585447804888f9cb8f909, type: 3}
+    size: 2025
+  - tag: stressnode7
+    prefab: {fileID: 21300000, guid: 0cae3243c2cf83849ad575866e153c5b, type: 3}
+    size: 2025
+  - tag: stressnode8
+    prefab: {fileID: 21300000, guid: f6a132016134f6c4eb751e53ad19016b, type: 3}
+    size: 2025
   workplane: {fileID: 325034345}
   aNN: {fileID: 1296179525}
   FieldContainer: {fileID: 975722792}
@@ -3856,7 +3881,7 @@ MonoBehaviour:
   TimeCountClear7: {fileID: 689774021}
   TimeCountClear8: {fileID: 1749730700}
   TimeCountClear9: {fileID: 1304477144}
-  TimeCountClear10: {fileID: 799811988}
+  beginning: 0
 --- !u!1 &824836635
 GameObject:
   m_ObjectHideFlags: 0
