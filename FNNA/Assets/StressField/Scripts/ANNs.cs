@@ -29,9 +29,9 @@ public class ANNs : MonoBehaviour
 
         public ArtificialNeuralNetwork(string FileNamePath, int InputNeurons, int OutputNeurons)
         {
-            this.fileNamePath = FileNamePath;
-            this.inputNeurons = InputNeurons;
-            this.outputNeurons = OutputNeurons;
+            fileNamePath = FileNamePath;
+            inputNeurons = InputNeurons;
+            outputNeurons = OutputNeurons;
 
             inputArray = new float[inputNeurons];
             outputArray = new float[outputNeurons];
@@ -43,13 +43,12 @@ public class ANNs : MonoBehaviour
 
             string path = Path.Combine(Application.streamingAssetsPath, fileNamePath);
 
-            this.InterpreterNN = new Interpreter(FileUtil.LoadFile(path), options);
-            this.InterpreterNN.AllocateTensors();
+            InterpreterNN = new Interpreter(FileUtil.LoadFile(path), options);
+            InterpreterNN.AllocateTensors();
         }
 
         public float[] NN_DoInference(string a, string b, string c)
         {
-            System.GC.Collect();
             inputArray[0] = float.Parse(a);
             inputArray[1] = float.Parse(b);
             inputArray[2] = float.Parse(c);
@@ -86,6 +85,8 @@ public class ANNs : MonoBehaviour
         public string name;
         public int input;
         public int output;
+        public float maxScale;
+        public float minScale;
     }
 
     private void Awake()
