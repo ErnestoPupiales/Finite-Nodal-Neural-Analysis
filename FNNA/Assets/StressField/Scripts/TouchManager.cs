@@ -20,6 +20,7 @@ public class TouchManager : MonoBehaviour
     public GraphCode grapchode;
 
     public bool test;
+    public bool rainsingedge;
 
 
     [SerializeField] private TMP_Text TimeCountClear11 = null;
@@ -53,6 +54,7 @@ public class TouchManager : MonoBehaviour
 
                         DisplacementBDScript.displacement = false;
                         activeLateral = false;
+                        rainsingedge = false;
                     }
                 }
                 else
@@ -65,6 +67,7 @@ public class TouchManager : MonoBehaviour
 
                 DisplacementBDScript.displacement = false;
                 activeLateral = false;
+                rainsingedge = false;
             }
         }
         else
@@ -74,13 +77,14 @@ public class TouchManager : MonoBehaviour
         }
 
 
-        if (test || activeLateral)
+        if ((test || activeLateral)&!rainsingedge)
         {
+            rainsingedge = true;
             beginning1 = Time.realtimeSinceStartup;
             grapchode.ActivateField(true);
             TimeCountClear11.text = (Time.realtimeSinceStartup - beginning1).ToString("0.00000000");
         }
-        else
+        else if(!rainsingedge)
         {
             grapchode.ActivateField(false);
         }

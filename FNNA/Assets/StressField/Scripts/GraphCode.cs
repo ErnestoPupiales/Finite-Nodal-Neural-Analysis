@@ -114,7 +114,6 @@ public class GraphCode : MonoBehaviour
             Text labeltext = label.GetComponent<Text>();
             labeltext.fontSize = 32;
             labeltext.font = LabelFont;
-            labeltext.color = Color.white;
 
             LabelsLists.Add(labeltext);
             LabelObject.Add(label);
@@ -274,11 +273,13 @@ public class GraphCode : MonoBehaviour
         int j = 0;
         int k = 1;
 
-        float scale = aNN.Parameters[labelindex].maxScale - aNN.Parameters[labelindex].minScale;
+        float scale = (aNN.Parameters[labelindex].maxScale - aNN.Parameters[labelindex].minScale)*1e6f;
 
         float delta = (stressMax - stressMin) / 8;
 
-        float minValue = aNN.Parameters[labelindex].minScale;
+        float minValue = aNN.Parameters[labelindex].minScale * 1e6f;
+
+        LabelsLists[labelindex].color = Color.white;
 
         LabelsLists[labelindex].text =      ((stressMin + delta * 8) * scale + minValue).ToString(".000e+00") + "\n\n" +
                                             ((stressMin + delta * 7) * scale + minValue).ToString(".000e+00") + "\n\n" +
