@@ -22,7 +22,8 @@ public class GraphCode : MonoBehaviour
 
     private float dispScale;
     private float dispMin;
-    public float viewScale;
+
+    public float viewScale = 5;
 
     public RectTransform workplane;
 
@@ -42,12 +43,21 @@ public class GraphCode : MonoBehaviour
     [SerializeField] TMP_InputField SMenor = null;
     [SerializeField] TMP_InputField Displacement = null;
 
+    [SerializeField] TMP_Dropdown fieldChoosen = null;
+    List<string> DropOptions_initial = new List<string>();
+    List<string> DropOptions = new List<string>();
+
+    private int selection;
+
     private float[] nodesCloudArray;
     private float[] dispArray;
     private float[] stressArray;
 
+
     private float stressMin;
     private float stressMax;
+
+    public Sprite node = null;
 
     //Just for evaluate the procesing time
     [SerializeField] private TMP_Text TimeCountClear1 = null;
@@ -101,15 +111,42 @@ public class GraphCode : MonoBehaviour
 
             LabelsLists.Add(labeltext);
             LabelObject.Add(label);
+
+            DropOptions_initial.Add(item.name);
         }
+
+        for (int i = 2; i < FieldList.Count; i++)
+        {
+            FieldList[i].SetActive(false);
+            LabelObject[i].SetActive(false);
+            DropOptions.Add(DropOptions_initial[i]);
+        }
+
+        fieldChoosen.AddOptions(DropOptions);
 
         poolDictionary = new Dictionary<string, Queue<GameObject>>();
 
+        Queue<GameObject> objectpoolnode0 = new Queue<GameObject>();
+        for (int i = 0; i < 2025 * 4; i++)
+        {
+            GameObject obj = new GameObject("node0", typeof(Image));
+            obj.GetComponent<Image>().sprite = node;
+            RectTransform rectTransform = obj.GetComponent<RectTransform>();
+            rectTransform.sizeDelta = new Vector2(15, 15);
+            rectTransform.anchorMin = new Vector2(0, 0);
+            rectTransform.anchorMax = new Vector2(0, 0);
+            obj.SetActive(false);
+            objectpoolnode0.Enqueue(obj);
+        }
+
+        poolDictionary.Add("node0", objectpoolnode0);
+
         foreach (Pool pool in pools)
         {
+
             Queue<GameObject> objectpool = new Queue<GameObject>();
 
-            for (int i = 0; i < pool.size * 4 * 6 ; i++)
+            for (int i = 0; i < pool.size * 4 * (FieldList.Count-2) ; i++)
             {
                 GameObject obj = new GameObject(pool.tag, typeof(Image));
                 obj.GetComponent<Image>().sprite = pool.prefab;           
@@ -124,12 +161,14 @@ public class GraphCode : MonoBehaviour
             poolDictionary.Add(pool.tag, objectpool);
         }
 
+
+
         dispScale = aNN.Parameters[1].maxScale - aNN.Parameters[1].minScale;
         dispMin = aNN.Parameters[1].minScale;
     }
 
 
-public void Calculate()
+    public void Calculate()
     {
         beginning = Time.realtimeSinceStartup;
         ClearAll();
@@ -149,6 +188,24 @@ public void Calculate()
             TimeCountClear5.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
         }
         TimeCountClear6.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
+        
+    }
+
+    public void ActivateField(bool state)
+    {
+        selection = fieldChoosen.value + 2;
+
+        if (state == true)
+        {
+            FieldList[selection].SetActive(true);
+            LabelObject[selection].SetActive(true);
+        }
+        else
+        {
+            FieldList[selection].SetActive(false);
+            LabelObject[selection].SetActive(false);
+        }
+        
         
     }
 
@@ -212,16 +269,18 @@ public void Calculate()
 
         float minValue = aNN.Parameters[labelindex].minScale;
 
-        LabelsLists[labelindex].text =      (stressMin * scale + minValue).ToString(".000e+00") + "\n\n" +
-                                            ((stressMin + delta * 1) * scale + minValue).ToString(".000e+00") + "\n\n" +
-                                            ((stressMin + delta * 2) * scale + minValue).ToString(".000e+00") + "\n\n" +
-                                            ((stressMin + delta * 3) * scale + minValue).ToString(".000e+00") + "\n\n" +
-                                            ((stressMin + delta * 4) * scale + minValue).ToString(".000e+00") + "\n\n" +
-                                            ((stressMin + delta * 5) * scale + minValue).ToString(".000e+00") + "\n\n" +
-                                            ((stressMin + delta * 6) * scale + minValue).ToString(".000e+00") + "\n\n" +
+        LabelsLists[labelindex].text =      ((stressMin + delta * 8) * scale + minValue).ToString(".000e+00") + "\n\n" +
                                             ((stressMin + delta * 7) * scale + minValue).ToString(".000e+00") + "\n\n" +
-                                            ((stressMin + delta * 8) * scale + minValue).ToString(".000e+00");
+                                            ((stressMin + delta * 6) * scale + minValue).ToString(".000e+00") + "\n\n" +
+                                            ((stressMin + delta * 5) * scale + minValue).ToString(".000e+00") + "\n\n" +
+                                            ((stressMin + delta * 4) * scale + minValue).ToString(".000e+00") + "\n\n" +
+                                            ((stressMin + delta * 3) * scale + minValue).ToString(".000e+00") + "\n\n" +
+                                            ((stressMin + delta * 2) * scale + minValue).ToString(".000e+00") + "\n\n" +
+                                            ((stressMin + delta * 1) * scale + minValue).ToString(".000e+00") + "\n\n" +
+                                            (stressMin * scale + minValue).ToString(".000e+00");
+
         
+
         for (int i = 0; i < 2025; i++)
         {
             if (stressMin <= stress[i] && stress[i] < stressMin + delta * 1) stressnode = "stressnode1";
@@ -233,11 +292,6 @@ public void Calculate()
             else if (stressMin + delta * 6 <= stress[i] && stress[i] < stressMin + delta * 7) stressnode = "stressnode7";
             else if (stressMin + delta * 7 <= stress[i] && stress[i] <= stressMin + delta * 8) stressnode = "stressnode8";
             else stressnode = "stressnode8";
-
-            /*CreateNode(new Vector2(coordinates[j] * 256 / 0.64f, coordinates[k] * 256 / 0.64f), container, stressnode);
-            CreateNode(new Vector2(coordinates[j] * -256 / 0.64f, coordinates[k] * 256 / 0.64f), container, stressnode);
-            CreateNode(new Vector2(coordinates[j] * 256 / 0.64f, coordinates[k] * -256 / 0.64f), container, stressnode);
-            CreateNode(new Vector2(coordinates[j] * -256 / 0.64f, coordinates[k] * -256 / 0.64f), container, stressnode);*/
 
             CreateNode(new Vector2((coordinates[j]  + (dispArray[j] * dispScale + dispMin)*viewScale) * 256 / 0.64f,  (coordinates[k] + (dispArray[k] * dispScale + dispMin)*viewScale) * 256 / 0.64f), container, stressnode);
             CreateNode(new Vector2((coordinates[j]  + (dispArray[j] * dispScale + dispMin)*viewScale) * -256 / 0.64f, (coordinates[k] + (dispArray[k] * dispScale + dispMin)*viewScale) * 256 / 0.64f), container, stressnode);

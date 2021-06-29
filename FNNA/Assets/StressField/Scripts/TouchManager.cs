@@ -17,12 +17,10 @@ public class TouchManager : MonoBehaviour
     public GameObject displacementBC;
     public DisplacementBC DisplacementBDScript;
 
+    public GraphCode grapchode;
 
-    [SerializeField] TMP_Dropdown stressChoosen = null;
-    public GameObject vonMissesDisplayed;
-    public GameObject trescaDisplayed;
-    public GameObject stressBar_Eqv;
-    public GameObject stressBar_Int;
+    public bool test;
+
 
     [SerializeField] private TMP_Text TimeCountClear11 = null;
     public double beginning1;
@@ -76,34 +74,15 @@ public class TouchManager : MonoBehaviour
         }
 
 
-        if (activeLateral)
+        if (test || activeLateral)
         {
             beginning1 = Time.realtimeSinceStartup;
-            ActivateStress(true);
+            grapchode.ActivateField(true);
             TimeCountClear11.text = (Time.realtimeSinceStartup - beginning1).ToString("0.00000000");
         }
         else
         {
-            ActivateStress(false);
-        }
-    }
-
-    public void ActivateStress(bool state)
-    {
-        if (stressChoosen.value == 0)
-        {
-            vonMissesDisplayed.SetActive(state);
-            stressBar_Eqv.SetActive(state);
-            trescaDisplayed.SetActive(false);
-            stressBar_Int.SetActive(false);
-        }
-
-        else
-        {
-            trescaDisplayed.SetActive(state);
-            stressBar_Int.SetActive(state);
-            vonMissesDisplayed.SetActive(false);
-            stressBar_Eqv.SetActive(false);
+            grapchode.ActivateField(false);
         }
     }
 

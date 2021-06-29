@@ -781,8 +781,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 14
-  m_fontSizeBase: 14
+  m_fontSize: 24
+  m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -3772,9 +3772,7 @@ MonoBehaviour:
   - tag: stressnode8
     prefab: {fileID: 21300000, guid: f6a132016134f6c4eb751e53ad19016b, type: 3}
     size: 2025
-  - tag: node0
-    prefab: {fileID: 21300000, guid: 9998d4660a771aa489b96c1fa11c295f, type: 3}
-    size: 2025
+  viewScale: 1
   workplane: {fileID: 325034345}
   aNN: {fileID: 1296179525}
   FieldContainer: {fileID: 975722792}
@@ -3783,6 +3781,7 @@ MonoBehaviour:
   SMayor: {fileID: 305796378}
   SMenor: {fileID: 897634960}
   Displacement: {fileID: 927210250}
+  fieldChoosen: {fileID: 1286007196}
   node: {fileID: 21300000, guid: 9998d4660a771aa489b96c1fa11c295f, type: 3}
   TimeCountClear1: {fileID: 2137100301}
   TimeCountClear2: {fileID: 615493602}
@@ -5128,7 +5127,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1117896382}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8f7b01ca8f5ce674fb1bc236843b51aa, type: 3}
   m_Name: 
@@ -5137,11 +5136,8 @@ MonoBehaviour:
   supportScript: {fileID: 681259436}
   displacementBC: {fileID: 1620461182}
   DisplacementBDScript: {fileID: 1620461189}
-  stressChoosen: {fileID: 1286007196}
-  vonMissesDisplayed: {fileID: 0}
-  trescaDisplayed: {fileID: 0}
-  stressBar_Eqv: {fileID: 2130847903}
-  stressBar_Int: {fileID: 789188630}
+  grapchode: {fileID: 820148052}
+  test: 0
   TimeCountClear11: {fileID: 1013381150}
   beginning1: 0
 --- !u!1 &1139635511
@@ -5497,7 +5493,7 @@ GameObject:
   - component: {fileID: 1286007197}
   - component: {fileID: 1286007196}
   m_Layer: 5
-  m_Name: stressFieldSelector
+  m_Name: fieldChoosen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5573,11 +5569,7 @@ MonoBehaviour:
   m_ItemImage: {fileID: 0}
   m_Value: 0
   m_Options:
-    m_Options:
-    - m_Text: VonMisses
-      m_Image: {fileID: 0}
-    - m_Text: Tresca
-      m_Image: {fileID: 0}
+    m_Options: []
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -8559,7 +8551,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: VonMisses
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
