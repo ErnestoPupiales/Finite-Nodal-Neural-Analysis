@@ -10,6 +10,7 @@ For each version you can download the android app instaler:
 | **Version** | **Release Date** | **Download** |
 |:-------:|:------:|:-------------:|
 | **main (unstable)** | -- | -- |
+| **v2.0.0** | **June 29, 2021** | **[download](Releases/MFNNAv2.0.0.apk)** |
 | **v1.0.0** | **April 20, 2021** | **[download](Releases/MFNNAv1.0.0.apk)** |
 
 ## Instructions
