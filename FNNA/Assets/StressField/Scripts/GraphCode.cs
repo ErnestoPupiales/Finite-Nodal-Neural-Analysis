@@ -114,6 +114,7 @@ public class GraphCode : MonoBehaviour
             Text labeltext = label.GetComponent<Text>();
             labeltext.fontSize = 32;
             labeltext.font = LabelFont;
+            labeltext.color = Color.white;
 
             LabelsLists.Add(labeltext);
             LabelObject.Add(label);
@@ -203,12 +204,14 @@ public class GraphCode : MonoBehaviour
 
         if (state == true && Set.fieldsetting[selection-2])
         {
+            FieldList[0].SetActive(false);
             FieldList[selection].SetActive(true);
             LabelObject[selection].SetActive(true);
             stessbar.SetActive(true);
         }
         else
         {
+            FieldList[0].SetActive(true);
             FieldList[selection].SetActive(false);
             LabelObject[selection].SetActive(false);
             stessbar.SetActive(false);
