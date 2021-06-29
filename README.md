@@ -12,11 +12,31 @@ For each version you can download the android app instaler:
 | **main (unstable)** | -- | -- |
 | **v1.0.0** | **April 20, 2021** | **[download](Releases/MFNNAv1.0.0.apk)** |
 
-Note: It must be taken into account that the Neural Networks were trained for values describe below:
+## Instructions
 
-Semi-Major Axis - (0, 0.64) - (m)
+1. Type the Semi-Major Axis. Neural Networks were trained for values as describe below.
+2. Type the Semi-Minor Axis. The value must be equal or minor than the Semi-Major Axis.
+3. Type the displacement boundary conditions. Neural Networks were trained for values as describe below.
+4. Select the stress field you want to plot
+5. Press Solve Button
+6. Activate the boundary conditions with the touch input by holding on one border and pulling in the other one.
 
-Semi-Minor Axis - (0, 0.64) - (m)
+## Trained values for the inputs
+
+In the case of the Semi Axis, these values are obligatory, otherwise the node cloud is not consistent.
+In the case of the Displacement Boundary condition is possible to predict solutions for values higher than the trained ones.
+
+# v 1.0.0
+
+- Semi-Major Axis belongs to (0,0.64) [m]
+- Displacement boundary condition belongs to [0.0025,0.05] [mm]
+
+# v 2.0.0 
+
+- Semi-Major Axis belongs to (0,0.64) [m]
+- Displacement boundary condition belongs to [0.7,14] [mm]
+
+
 
 
 
