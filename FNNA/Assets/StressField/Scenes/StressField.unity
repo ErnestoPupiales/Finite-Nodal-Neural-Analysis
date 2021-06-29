@@ -5082,6 +5082,7 @@ MonoBehaviour:
   TogglePrefab: {fileID: 8218069009261446232, guid: 4989eb527f2675f4baf66ae90bc81d12,
     type: 3}
   obj: {fileID: 1587161534}
+  fieldChoosenSet: {fileID: 1286007196}
   fieldsetting: 
 --- !u!224 &1073570218
 RectTransform:

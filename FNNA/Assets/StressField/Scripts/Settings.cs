@@ -11,6 +11,8 @@ public class Settings : MonoBehaviour
     public RectTransform obj;
     Text label;
 
+    [SerializeField] TMP_Dropdown fieldChoosenSet = null;
+
     List<Toggle> ToggleList = new List<Toggle>();
     public List<bool> fieldsetting = new List<bool>();
 
@@ -43,9 +45,23 @@ public class Settings : MonoBehaviour
 
     public void SetSetting()
     {
-        for(int i=0; i<ToggleList.Count; i++)
+        List<string> DropOptions = new List<string>();
+        for (int i=0; i<ToggleList.Count; i++)
         {
             fieldsetting[i] = ToggleList[i].isOn;
+
+            if (fieldsetting[i])
+            {
+                DropOptions.Add(ANNSet.Parameters[i + 2].name);
+            }
+            else
+            {
+                DropOptions.Add("");
+            }
         }
+
+        fieldChoosenSet.ClearOptions();
+        fieldChoosenSet.AddOptions(DropOptions);
     }
+    
 }

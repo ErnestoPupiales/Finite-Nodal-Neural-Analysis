@@ -118,17 +118,14 @@ public class GraphCode : MonoBehaviour
             LabelsLists.Add(labeltext);
             LabelObject.Add(label);
 
-            DropOptions_initial.Add(item.name);
         }
 
         for (int i = 2; i < FieldList.Count; i++)
         {
             FieldList[i].SetActive(false);
             LabelObject[i].SetActive(false);
-            DropOptions.Add(DropOptions_initial[i]);
         }
 
-        fieldChoosen.AddOptions(DropOptions);
 
         poolDictionary = new Dictionary<string, Queue<GameObject>>();
 
@@ -172,26 +169,6 @@ public class GraphCode : MonoBehaviour
         dispScale = aNN.Parameters[1].maxScale - aNN.Parameters[1].minScale;
         dispMin = aNN.Parameters[1].minScale;
     }
-
-    /*public void droplistupdate()
-    {
-        fieldChoosen.ClearOptions();
-        List<string> DropOptions = new List<string>();
-
-        for(int i=0; i < Set.fieldsetting.Count; i++)
-        {
-            if (Set.fieldsetting[i])
-            {
-                DropOptions.Add(aNN.Parameters[i + 2].name);
-            }
-            else
-            {
-                DropOptions.Add("Not Available");
-            }
-        }
-
-        fieldChoosen.AddOptions(DropOptions);
-    }*/
 
     public void Calculate()
     {
