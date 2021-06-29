@@ -28,13 +28,13 @@ In the case of the Displacement Boundary condition is possible to predict soluti
 
 # v 1.0.0
 
-Semi-Major Axis belongs to (0,0.64) [m]
-Displacement boundary condition belongs to [0.0025,0.05] [mm]
+- Semi-Major Axis belongs to (0,0.64) [m]
+- Displacement boundary condition belongs to [0.0025,0.05] [mm]
 
 # v 2.0.0 
 
-Semi-Major Axis belongs to (0,0.64) [m]
-Displacement boundary condition belongs to [0.7,14] [mm]
+- Semi-Major Axis belongs to (0,0.64) [m]
+- Displacement boundary condition belongs to [0.7,14] [mm]
 
 
 
