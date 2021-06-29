@@ -23,6 +23,8 @@ public class GraphCode : MonoBehaviour
     private float dispScale;
     private float dispMin;
 
+    public GameObject stessbar;
+
     public float viewScale = 5;
 
     public RectTransform workplane;
@@ -46,6 +48,8 @@ public class GraphCode : MonoBehaviour
     [SerializeField] TMP_Dropdown fieldChoosen = null;
     List<string> DropOptions_initial = new List<string>();
     List<string> DropOptions = new List<string>();
+
+    public Settings Set;
 
     private int selection;
 
@@ -76,6 +80,8 @@ public class GraphCode : MonoBehaviour
 
     private void Awake()
     {
+       
+
         nodesCloudArray = new float[4050];
         dispArray = new float[4050];
         stressArray = new float[2025];
@@ -167,6 +173,25 @@ public class GraphCode : MonoBehaviour
         dispMin = aNN.Parameters[1].minScale;
     }
 
+    /*public void droplistupdate()
+    {
+        fieldChoosen.ClearOptions();
+        List<string> DropOptions = new List<string>();
+
+        for(int i=0; i < Set.fieldsetting.Count; i++)
+        {
+            if (Set.fieldsetting[i])
+            {
+                DropOptions.Add(aNN.Parameters[i + 2].name);
+            }
+            else
+            {
+                DropOptions.Add("Not Available");
+            }
+        }
+
+        fieldChoosen.AddOptions(DropOptions);
+    }*/
 
     public void Calculate()
     {
@@ -180,12 +205,16 @@ public class GraphCode : MonoBehaviour
 
         dispArray = aNN.NN[1].NN_DoInference(SMayor.text, SMenor.text, Displacement.text);
 
+
         for (int i = 2; i < FieldList.Count; i++)
-        {          
-            stressArray = aNN.NN[i].NN_DoInference(SMayor.text, SMenor.text, Displacement.text);
-            TimeCountClear4.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
-            StressDisplay(nodesCloudArray, stressArray, fieldRectTransformList[i],i);
-            TimeCountClear5.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
+        {
+            if (Set.fieldsetting[i-2])
+            {
+                stressArray = aNN.NN[i].NN_DoInference(SMayor.text, SMenor.text, Displacement.text);
+                TimeCountClear4.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
+                StressDisplay(nodesCloudArray, stressArray, fieldRectTransformList[i], i);
+                TimeCountClear5.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
+            }
         }
         TimeCountClear6.text = (Time.realtimeSinceStartup - beginning).ToString("0.00000000");
         
@@ -195,18 +224,20 @@ public class GraphCode : MonoBehaviour
     {
         selection = fieldChoosen.value + 2;
 
-        if (state == true)
+        if (state == true && Set.fieldsetting[selection-2])
         {
             FieldList[selection].SetActive(true);
             LabelObject[selection].SetActive(true);
+            stessbar.SetActive(true);
         }
         else
         {
             FieldList[selection].SetActive(false);
             LabelObject[selection].SetActive(false);
+            stessbar.SetActive(false);
         }
         
-        
+         
     }
 
     private void CreateNode(Vector2 anchoredPosition, RectTransform container, string tag)
